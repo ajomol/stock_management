@@ -1,0 +1,3 @@
+*.pyc
+management/
+db.sqlite3

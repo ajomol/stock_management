@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Stock Management</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <a href="{% url 'stock_list' %}"><h1>Stock Management </h1></a>
+      </div>
+      <div class="content">
+      	<table class="table table-bordered table-hover">
+      	  <thead>
+        		<tr> 
+                <td colspan="4" class="warning boldcase">{{object}}  
+                  <button type="button" id="btn_volume" class="btn btn-info btn-md pull-right" >View Volume Details</button>
+                </td>
+            </tr>
+        		<tr>
+        			<td class="active boldcase">Date</td>
+        			<td class="success boldcase">Open</td>
+              <td class="active boldcase">Close</td>
+              <td class="success boldcase">% Change</td>
+        		</tr>
+      	  </thead>
+      	  <tbody>
+            {% for item in stock_data %}
+            <tr>
+              <td class="active">{{ item.stock_date | date:"M d, Y"}}</td>
+              <td class="success">{{ item.stock_open}}</td>
+              <td class="danger">{{ item.stock_close }}</td>
+              <td class="error">{{item.get_percentage|floatformat}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+              <td colspan="4">
+                <nav aria-label="...">
+                  <ul class="pagination pagination-sm">
+                    {% if stock_data.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ stock_data.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item"><a class="page-link" href="#">{{ stock_data.number }}</a></li>
+                    {% if stock_data.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ stock_data.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                    {% endif %}
+                  </ul>
+                </nav>
+              </td>
+            </tr>
+          </tbody>
+      	</table>
+        
+      </div>
+
+
+    </div>
+
+    <!-- Modal Volume Detials of each Stock-->
+  
+    <div id="volumeModal" class="modal fade" role="dialog" aria-labelledby="volumeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+            <h3>Volume Details</h3>
+          </div>
+          <div id="volumeDetails" class="modal-body">
+            <table class="table table-bordered">
+              <thead>
+                <tr> <td colspan="2" class="warning boldcase">Top 5 volumes of {{object}}</td></tr>
+                <tr>
+                  <td class="success">Date</td>
+                  <td class="active">Volume</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in volume_dict_list %}
+                <tr>
+                  <td class="success">{{ item.1 | date:"M d, Y"}}</td>
+                  <td class="active">{{ item.0}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </body>
+
+  
+
+</html>
+
+<script type="text/javascript">
+  // Click event for volume details
+  $('#btn_volume').on('click', function(event) {
+    event.preventDefault(); // To prevent following the link (optional)
+    $("#volumeModal").modal('show');
+  });
+</script>
+
+<style type="text/css">
+  .modal-dialog{
+    width:70%;
+    max-height:500px;
+    /*overflow:scroll;*/
+  }
+  .boldcase{
+    font-weight:bold
+  }
+</style>
